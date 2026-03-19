@@ -1,5 +1,8 @@
-# godot-cpp template
-This repository serves as a quickstart template for GDExtension development with Godot 4.0+.
+# WIP: Poisson Disk Sampler GDExtension
+
+Adapted from Steven Sell's [tutorial](https://www.vertexfragment.com/ramblings/variable-density-poisson-sampler/) and [Unity project](https://github.com/ssell/VariablePoissonSampler).
+
+Repository created from the [GDExtension template](https://github.com/godotengine/godot-cpp-template), not cleaned up yet!
 
 ## Contents
 * Preconfigured source files for C++ development of the GDExtension ([src/](./src/))
