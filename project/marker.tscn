@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://dxxtfh7iqa268"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_2jas5"]
+
+[node name="Marker" type="MeshInstance3D" unique_id=1182122965]
+mesh = SubResource("SphereMesh_2jas5")
