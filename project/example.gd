@@ -10,7 +10,7 @@ func generate():
 	for child in get_children():
 		if child is MeshInstance3D: child.queue_free()
 	
-	var sampler = UniformPoissonSampler2D.new();
+	var sampler = VariablePoissonSampler2D.new();
 	
 	var time_before = Time.get_ticks_msec()
 	sampler.generate(1.0, 100.0, 100.0, 30);
