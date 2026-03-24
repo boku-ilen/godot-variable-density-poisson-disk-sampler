@@ -1,7 +1,11 @@
 #include "variable_poisson.h"
 #include "godot_cpp/classes/random_number_generator.hpp"
-#include "godot_cpp/core/print_string.hpp"
 #include <cmath>
+
+// For Windows
+#ifndef M_PI
+    #define M_PI 3.14159265358979323846
+#endif
 
 void VariablePoissonSampler2D::_bind_methods() {
 	godot::ClassDB::bind_method(D_METHOD("generate", "radius", "width", "height", "rejection_limit"), &VariablePoissonSampler2D::generate);
