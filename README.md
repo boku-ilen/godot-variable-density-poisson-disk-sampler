@@ -1,4 +1,8 @@
-# WIP: Poisson Disk Sampler GDExtension
+# Variable Poisson Disk Sampler GDExtension
+
+Sample random points with a variable density based on an arbitrary density function, e.g. pixel values in an image:
+
+<img width="1115" height="1115" alt="image" src="https://github.com/user-attachments/assets/f3e1a91a-7176-4747-8759-2d52a5132405" />
 
 Adapted from Steven Sell's [tutorial](https://www.vertexfragment.com/ramblings/variable-density-poisson-sampler/) and [Unity project](https://github.com/ssell/VariablePoissonSampler).
 
