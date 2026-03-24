@@ -18,10 +18,6 @@ public:
 	VariablePoissonSampler2D() = default;
 	~VariablePoissonSampler2D() override = default;
 
-	/***
-		Generate something
-		@returns a bool?
-	*/
 	bool generate(Callable get_radius_at, float min_radius, float max_radius, float width, float height, int rejection_limit);
 
 	Array get_samples();

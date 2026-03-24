@@ -1,7 +1,6 @@
 #include "variable_poisson.h"
 #include "godot_cpp/classes/random_number_generator.hpp"
 #include "godot_cpp/core/print_string.hpp"
-#include <algorithm>
 #include <cmath>
 
 void VariablePoissonSampler2D::_bind_methods() {
@@ -10,10 +9,8 @@ void VariablePoissonSampler2D::_bind_methods() {
 }
 
 void VariablePoissonSampler2D::initialize() {
-	is_generating = true;
-
 	spatial_grid = SpatialGrid2D<int>(width, height, min_radius, max_radius);
-	active_list.resize(spatial_grid.cells_per_x * spatial_grid.cells_per_y);
+	active_list.reserve(spatial_grid.cells_per_x * spatial_grid.cells_per_y);
 }
 
 void VariablePoissonSampler2D::add_sample(Vector2 sample) {
@@ -24,7 +21,7 @@ void VariablePoissonSampler2D::add_sample(Vector2 sample) {
 }
 
 int VariablePoissonSampler2D::get_random_active_list_index() {
-	return rng->randi_range(0, active_list.size());
+	return rng->randi_range(0, active_list.size() - 1);
 }
 
 Vector2 VariablePoissonSampler2D::generate_random_point_in_annulus(Vector2 point, float radius) {
@@ -53,8 +50,6 @@ bool VariablePoissonSampler2D::generate(Callable get_radius_at, float min_radius
 	this->width = width;
 	this->height = height;
 	this->rejection_limit = rejection_limit;
-
-	if (is_generating) return false;
 
 	initialize();
 	generate_first_point();

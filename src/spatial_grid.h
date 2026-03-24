@@ -29,6 +29,8 @@ struct SpatialGridItem {
     float x;
     float y;
     float radius;
+
+    SpatialGridItem(int index, float x, float y, float radius) : index(index), x(x), y(y), radius(radius) {}
 };
 
 struct SpatialCell {
@@ -40,7 +42,8 @@ struct SpatialCell {
     float dimension;
 
     std::vector<SpatialGridItem> contents;
-    
+
+    SpatialCell() = default;
     SpatialCell(int x, int y, float dimension);
     bool contains_point(float x, float y);
     bool intersects_cell(float x, float y, float radius);

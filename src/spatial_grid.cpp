@@ -12,12 +12,12 @@ SpatialGrid2D<T>::SpatialGrid2D(float width, float height, float min_radius, flo
 
     int total_cells = cells_per_x * cells_per_y;
 
-    grid_cells = std::vector<SpatialCell>(total_cells);
-    grid_items = std::vector<T>(total_cells);
+    grid_cells.reserve(total_cells);
+    grid_items.reserve(total_cells);
 
     for (int y = 0; y < cells_per_y; ++y) {
         for (int x = 0; x < cells_per_x; ++x) {
-            grid_cells.add(SpatialCell(x, y, cell_length));
+            grid_cells.emplace_back(SpatialCell(x, y, cell_length));
         }
     }
 }
@@ -33,7 +33,7 @@ bool SpatialGrid2D<T>::add(T item, float x, float y, float radius) {
     return true;
 }
 
-template <class T>
+template <typename T>
 bool SpatialGrid2D<T>::add_if_open(T item, float x, float y, float radius) {
     int index = _get_index(x, y);
 
@@ -62,7 +62,7 @@ void SpatialGrid2D<T>::_add(T item, int cell_index, float x, float y, float radi
             }
 
             if (grid_cells[neighbor].intersects_cell(x, y, radius)) {
-                grid_cells[neighbor].contents.add(spatial_item);
+                grid_cells[neighbor].contents.emplace_back(spatial_item);
             }
         }
     }
@@ -76,7 +76,7 @@ void SpatialGrid2D<T>::remove(T item) {
     // Remove reference to item in grid_items
     while (index < grid_items_size) {
         if (grid_items[index] == item) {
-            grid_items.erase(index);
+            grid_items.erase(grid_items.begin() + index);
             break;
         }
 
@@ -87,7 +87,7 @@ void SpatialGrid2D<T>::remove(T item) {
     for (SpatialCell cell : grid_cells) {
         for (int j = (cell.contents.size() - 1); j >= 0; j--) {
             if (cell.contents[j].index == index) {
-                cell.contents.erase(j);
+                cell.contents.erase(cell.contents.begin() + j);
             }
         }
     }
@@ -220,3 +220,5 @@ std::vector<typename SpatialGrid2D<T>::SpatialGridItem> SpatialGrid2D<T>::Spatia
 
     return intersections;
 }
+
+template class SpatialGrid2D<int>;
