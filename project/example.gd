@@ -12,8 +12,16 @@ func generate():
 	var density_func = func(x, y):
 		return lerp(1.5, 0.5, icon.get_image().get_pixel(x, y).b)
 	
+	var griddedness_func = func(x, y):
+		return lerp(1.0, 0.0, icon.get_image().get_pixel(x, y).g)
+	
+	sampler.set_radius_callable(density_func)
+	sampler.set_griddedness_callable(griddedness_func)
+	sampler.set_width_height(127.0, 127.0)
+	sampler.set_min_max_radius(0.5, 1.5)
+	
 	var time_before = Time.get_ticks_msec()
-	sampler.generate(density_func, 1., 10., 127.0, 127.0, 1.0, 30);
+	sampler.generate();
 	var time_after = Time.get_ticks_msec()
 	
 	print("Generating %s points took %s msec" % [str(sampler.get_samples().size()), str(time_after - time_before)])

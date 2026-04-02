@@ -9,8 +9,13 @@
 #endif
 
 void VariablePoissonSampler2D::_bind_methods() {
-	godot::ClassDB::bind_method(D_METHOD("generate", "radius", "width", "height", "rejection_limit"), &VariablePoissonSampler2D::generate);
+	godot::ClassDB::bind_method(D_METHOD("generate"), &VariablePoissonSampler2D::generate);
 	godot::ClassDB::bind_method(D_METHOD("get_samples"), &VariablePoissonSampler2D::get_samples);
+	godot::ClassDB::bind_method(D_METHOD("set_min_max_radius", "min_radius", "max_radius"), &VariablePoissonSampler2D::set_min_max_radius);
+	godot::ClassDB::bind_method(D_METHOD("set_width_height", "width", "height"), &VariablePoissonSampler2D::set_width_height);
+	godot::ClassDB::bind_method(D_METHOD("set_radius_callable", "get_radius_at"), &VariablePoissonSampler2D::set_radius_callable);
+	godot::ClassDB::bind_method(D_METHOD("set_griddedness_callable", "get_griddedness_at"), &VariablePoissonSampler2D::set_griddedness_callable);
+	godot::ClassDB::bind_method(D_METHOD("set_rejection_limit", "rejection_limit"), &VariablePoissonSampler2D::set_rejection_limit);
 }
 
 void VariablePoissonSampler2D::initialize() {
@@ -53,15 +58,8 @@ void VariablePoissonSampler2D::generate_first_point() {
 	add_sample(Vector2(rng->randf_range(0.0, width), rng->randf_range(0.0, height)));
 }
 
-bool VariablePoissonSampler2D::generate(Callable get_radius_at, float min_radius, float max_radius, float width, float height, float griddedness, int rejection_limit) {
+bool VariablePoissonSampler2D::generate() {
 	rng.instantiate();
-
-	this->get_radius_at = get_radius_at;
-	this->min_radius = min_radius;
-	this->max_radius = max_radius;
-	this->width = width;
-	this->height = height;
-	this->rejection_limit = rejection_limit;
 
 	initialize();
 	generate_first_point();
@@ -74,7 +72,9 @@ bool VariablePoissonSampler2D::generate(Callable get_radius_at, float min_radius
 		Vector2 current_sample = samples_list[active_list[active_index]];
 
 		for (int i = 0; i < rejection_limit; i++) {
-			float radius = get_radius_at.call(current_sample.x, current_sample.y);
+			float radius = static_cast<float>(get_radius_at.call(current_sample.x, current_sample.y));
+			float griddedness = get_griddedness_at.is_valid() ? static_cast<float>(get_griddedness_at.call(current_sample.x, current_sample.y)) : 0.0;
+
 			Vector2 random_sample = generate_random_point_in_annulus(current_sample, radius, griddedness);
 
 			if (spatial_grid.add_if_open(samples_list.size(), random_sample.x, random_sample.y, radius)) {
@@ -93,6 +93,33 @@ bool VariablePoissonSampler2D::generate(Callable get_radius_at, float min_radius
 
 	is_generating = false;
 	return true;
+}
+
+Vector2 VariablePoissonSampler2D::generate_next_sample() {
+	// TODO: Implement as a single step of the loop in `generate()`
+	return Vector2(0.0, 0.0);
+}
+
+void VariablePoissonSampler2D::set_min_max_radius(float min_radius, float max_radius) {
+	this->min_radius = min_radius;
+	this->max_radius = max_radius;
+}
+
+void VariablePoissonSampler2D::set_width_height(float width, float height) {
+	this->width = width;
+	this->height = height;
+}
+
+void VariablePoissonSampler2D::set_radius_callable(Callable get_radius_at) {
+	this->get_radius_at = get_radius_at;
+}
+
+void VariablePoissonSampler2D::set_griddedness_callable(Callable get_griddedness_at) {
+	this->get_griddedness_at = get_griddedness_at;
+}
+
+void VariablePoissonSampler2D::set_rejection_limit(int rejetion_limit) {
+	this->rejection_limit = rejetion_limit;
 }
 
 Array VariablePoissonSampler2D::get_samples() {
