@@ -1,5 +1,6 @@
 #include "variable_poisson.h"
 #include "godot_cpp/classes/random_number_generator.hpp"
+#include <algorithm>
 #include <cmath>
 
 // For Windows
@@ -28,12 +29,19 @@ int VariablePoissonSampler2D::get_random_active_list_index() {
 	return rng->randi_range(0, active_list.size() - 1);
 }
 
-Vector2 VariablePoissonSampler2D::generate_random_point_in_annulus(Vector2 point, float radius) {
+Vector2 VariablePoissonSampler2D::generate_random_point_in_annulus(Vector2 point, float radius, float griddedness) {
 	float min = radius;
-	float max = radius * 2.0;
+	float max = radius * (2.0 - griddedness * 0.5);
 
 	float distance = rng->randf_range(min, max);
 	float angle = rng->randf_range(0.0, M_PI * 2.0);
+
+	if (griddedness > 0.0) {
+		float quadrant = static_cast<float>(rng->randi_range(0, 3)) * (M_PI / 2.0);
+		float deviation = rng->randfn(0.0, std::clamp((1.0 - griddedness) * 0.15, -M_PI / 4.0, M_PI / 4.0));
+
+		angle = quadrant + deviation;
+	}
 
 	return Vector2(
 		point.x + std::cos(angle) * distance,
@@ -45,7 +53,7 @@ void VariablePoissonSampler2D::generate_first_point() {
 	add_sample(Vector2(rng->randf_range(0.0, width), rng->randf_range(0.0, height)));
 }
 
-bool VariablePoissonSampler2D::generate(Callable get_radius_at, float min_radius, float max_radius, float width, float height, int rejection_limit) {
+bool VariablePoissonSampler2D::generate(Callable get_radius_at, float min_radius, float max_radius, float width, float height, float griddedness, int rejection_limit) {
 	rng.instantiate();
 
 	this->get_radius_at = get_radius_at;
@@ -67,7 +75,7 @@ bool VariablePoissonSampler2D::generate(Callable get_radius_at, float min_radius
 
 		for (int i = 0; i < rejection_limit; i++) {
 			float radius = get_radius_at.call(current_sample.x, current_sample.y);
-			Vector2 random_sample = generate_random_point_in_annulus(current_sample, radius);
+			Vector2 random_sample = generate_random_point_in_annulus(current_sample, radius, griddedness);
 
 			if (spatial_grid.add_if_open(samples_list.size(), random_sample.x, random_sample.y, radius)) {
 				add_sample(random_sample);

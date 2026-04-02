@@ -18,7 +18,7 @@ public:
 	VariablePoissonSampler2D() = default;
 	~VariablePoissonSampler2D() override = default;
 
-	bool generate(Callable get_radius_at, float min_radius, float max_radius, float width, float height, int rejection_limit);
+	bool generate(Callable get_radius_at, float min_radius, float max_radius, float width, float height, float griddedness, int rejection_limit);
 
 	Array get_samples();
 
@@ -27,7 +27,7 @@ private:
     void generate_first_point();
     void add_sample(Vector2 sample);
     int get_random_active_list_index();
-    Vector2 generate_random_point_in_annulus(Vector2 point, float radius);
+    Vector2 generate_random_point_in_annulus(Vector2 point, float radius, float griddedness);
 
 	float min_radius;
 	float max_radius;

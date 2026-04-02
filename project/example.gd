@@ -13,7 +13,7 @@ func generate():
 		return lerp(1.5, 0.5, icon.get_image().get_pixel(x, y).b)
 	
 	var time_before = Time.get_ticks_msec()
-	sampler.generate(density_func, 1., 10., 127.0, 127.0, 30);
+	sampler.generate(density_func, 1., 10., 127.0, 127.0, 1.0, 30);
 	var time_after = Time.get_ticks_msec()
 	
 	print("Generating %s points took %s msec" % [str(sampler.get_samples().size()), str(time_after - time_before)])
