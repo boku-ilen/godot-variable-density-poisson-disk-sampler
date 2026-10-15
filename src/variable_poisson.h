@@ -27,6 +27,9 @@ public:
 	/// Useful if the generation process should be visualized or split into multiple frames.
 	Vector2 generate_next_sample();
 
+	/// Set a custom RandomNumberGenerator object. Useful for deterministic output.
+	void set_rng(Ref<RandomNumberGenerator> rng);
+
 	/// Set the expected minimum and maximum radius which will be returned by `get_radius_at`.
 	/// Not used for the point generation logic directly, but for the underlying spatial grid optimization.
 	void set_min_max_radius(float min_radius, float max_radius);

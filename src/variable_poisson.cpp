@@ -11,6 +11,7 @@
 void VariablePoissonSampler2D::_bind_methods() {
 	godot::ClassDB::bind_method(D_METHOD("generate"), &VariablePoissonSampler2D::generate);
 	godot::ClassDB::bind_method(D_METHOD("get_samples"), &VariablePoissonSampler2D::get_samples);
+	godot::ClassDB::bind_method(D_METHOD("set_rng", "rng"), &VariablePoissonSampler2D::set_rng);
 	godot::ClassDB::bind_method(D_METHOD("set_min_max_radius", "min_radius", "max_radius"), &VariablePoissonSampler2D::set_min_max_radius);
 	godot::ClassDB::bind_method(D_METHOD("set_width_height", "width", "height"), &VariablePoissonSampler2D::set_width_height);
 	godot::ClassDB::bind_method(D_METHOD("set_radius_callable", "get_radius_at"), &VariablePoissonSampler2D::set_radius_callable);
@@ -59,8 +60,8 @@ void VariablePoissonSampler2D::generate_first_point() {
 }
 
 bool VariablePoissonSampler2D::generate() {
-	rng.instantiate();
-
+	if (rng.is_null()) rng.instantiate();
+	
 	initialize();
 	generate_first_point();
 
@@ -98,6 +99,10 @@ bool VariablePoissonSampler2D::generate() {
 Vector2 VariablePoissonSampler2D::generate_next_sample() {
 	// TODO: Implement as a single step of the loop in `generate()`
 	return Vector2(0.0, 0.0);
+}
+
+void VariablePoissonSampler2D::set_rng(Ref<RandomNumberGenerator> rng) {
+	this->rng = rng;
 }
 
 void VariablePoissonSampler2D::set_min_max_radius(float min_radius, float max_radius) {
